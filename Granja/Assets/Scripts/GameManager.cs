@@ -5,7 +5,6 @@ using UnityEngine;
 public class GameManager: MonoBehaviour {
     // Start is called before the first frame update
     public GameObject creationMenu, objectTree, objectTractor, objectStone, objectPlant, selectedObject, newObject;
-    public CanvasGroup ImageCreationMenu;
 
     public enum StateSelector {
         Create,
@@ -26,9 +25,7 @@ public class GameManager: MonoBehaviour {
     CreationSelector selectedOption = CreationSelector.None;
 
     void Start () {
-        LeanTween.moveLocalX (creationMenu, -1000f, 0f);
-        creationMenu.SetActive (false);
-        LeanTween.alphaCanvas (ImageCreationMenu, 0f, 0f);
+        LeanTween.moveLocalX (creationMenu, -1300f, 0f);
     }
 
     // Update is called once per frame
@@ -37,9 +34,7 @@ public class GameManager: MonoBehaviour {
         switch (currentState) {
 
             case StateSelector.Create:
-                LeanTween.alphaCanvas (ImageCreationMenu, 0.6078f, 0.5f).setEaseInCubic ();
-                creationMenu.SetActive (true);
-                LeanTween.moveLocalX (creationMenu, -730f, 1f).setEaseInBounce ();
+                LeanTween.moveLocalX (creationMenu, -730f, 0.75f).setEaseOutBounce ();
                 break;
 
             case StateSelector.CameraMove:
@@ -97,18 +92,21 @@ public class GameManager: MonoBehaviour {
 
         void CreatedObject () {
             Vector2 mousePos = Input.mousePosition;
-            Ray moveRay = Camera.main.ScreenPointToRay (mousePos);
+            Ray detectRay = Camera.main.ScreenPointToRay (mousePos);
             RaycastHit hitInfo;
             newObject = selectedObject;
             selectedObject = null;
             Instantiate (newObject);
             newObject.SetActive (false);
 
-            if (Physics.Raycast (moveRay, out hitInfo) == true) {
+            if (Physics.Raycast (detectRay, out hitInfo) == true) {
+                Ray newRay = Camera.main.ScreenPointToRay (mousePos);
+                RaycastHit hitInfoTwo;
+
                 newObject.transform.position = hitInfo.point + Vector3.up * selectedObject.transform.localScale.y / 2f;
             }
 
-            selectedObject.SetActive (true);
+            newObject.SetActive (true);
 
             if (Input.GetMouseButtonUp (0)) {
                 selectedOption = CreationSelector.None;
@@ -127,22 +125,21 @@ public class GameManager: MonoBehaviour {
     }
 
     public void ClickedEscape () {
-        LeanTween.moveLocalX (creationMenu, -1000, 1f).setEaseOutCubic ().setOnComplete (MenuFalse);
-    }
-
-    public void MenuFalse () {
-        creationMenu.SetActive (false);
+        LeanTween.moveLocalX (creationMenu, -1300, 1f).setEaseOutCubic ();
     }
 
     public void ClickedTree () {
         selectedOption = CreationSelector.Tree;
     }
+
     public void ClickedTractor () {
         selectedOption = CreationSelector.Tractor;
     }
+
     public void ClickedStone () {
         selectedOption = CreationSelector.Stone;
     }
+
     public void ClickedPlant () {
         selectedOption = CreationSelector.Plant;
     }
