@@ -13,14 +13,12 @@ public class GameManager: MonoBehaviour {
     // Update is called once per frame
 
     public void ClickedCreate () {
-        currentState = StateSelector.Create;
         LeanTween.moveLocalX (creationMenu, -730f, 1f).setEaseOutBounce ();
         LeanTween.moveLocalY (mainMenu, -110f, 1f).setEaseInCubic ();
         Debug.Log ("Clicked create");
     }
 
     public void ClickedCamera () {
-        currentState = StateSelector.CameraMove;
         LeanTween.moveLocalY (cameraMessage, 110, 1f).setEaseOutBounce ();
         LeanTween.moveLocalY (mainMenu, -110f, 1f).setEaseInCubic ();
 
@@ -28,8 +26,10 @@ public class GameManager: MonoBehaviour {
     }
 
     public void ClickedEscape () {
-        LeanTween.moveLocalX (creationMenu, -1300, 1f).setEaseOutCubic ();
-        currentState = StateSelector.Idle;
+        LeanTween.moveLocalX (creationMenu, -1300, 1f).setEaseOutCubic ().setOnComplete (() => {
+            LeanTween.moveLocalY (mainMenu, 110f, 1f).setEaseInCubic ();
+        });
+
     }
 
 }
